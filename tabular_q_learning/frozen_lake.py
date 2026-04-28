@@ -89,11 +89,11 @@ def checkingresults():
 
 
 while(True):
-    print("chuj | exit | train(todo) | test(todo)")
+    print("nothing | exit | train(todo) | test(todo)")
     a = input("choose an option:_ ")
 
-    if a == "chuj":
-        print("8===D")
+    if a == "nothing":
+        print("n o t h i n g")
     elif a == "exit":
         break;
 
