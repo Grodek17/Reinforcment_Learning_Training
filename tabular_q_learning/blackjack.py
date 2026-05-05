@@ -4,9 +4,10 @@ import random
 
 #constants
 NUMBER_OF_EPISODES = 20000
+MINIMAL_EPSILON = 0.1
 
 #hyperparameters
-alpha = 0.3         #learning rate
+alpha = 0.1         #learning rate
 gamma = 0.99        #"importance of future"
 epsilon = 0.999       #random move probability
 Q = {}
@@ -81,7 +82,7 @@ for x in range(NUMBER_OF_EPISODES):
             action = random.randint(0,1)
             print("[DEBUG], random action chosen: ", action, " ", ActionNames[action] )
         
-        epsilon = epsilon * 0.999
+        epsilon = max(epsilon * 0.999, MINIMAL_EPSILON)
 
         new_observation, reward, terminated, truncated, info = env.step(action)
         print("[DEBUG], observation after action: ", new_observation)
@@ -110,6 +111,45 @@ for x in range(NUMBER_OF_EPISODES):
         print("epsilon = ", epsilon)
         print("======================================================================")
 
+print("======EVAL MODE=====")
+
+wins = 0
+losses = 0
+for x in range(NUMBER_OF_EPISODES):
+    observation, info = env.reset()
+    print(observation, " <- observation")
+    print(Q[observation][0], "<- reward for 0 || reward for 1 ->", Q[observation][1])
+    episode_end = False
+    episode_reward = 0
+
+    while not episode_end:
+        print(observation, " <- observation")
+        #following the trained alghoritm
+        action = np.argmax(Q[observation])
+    
+        new_observation, reward, terminated, truncated, info = env.step(action)
+
+        episode_reward += reward
+
+        #ending episode
+        if terminated or truncated:
+            episode_end = True
+            if episode_reward == 1:
+                wins += 1
+            elif episode_reward == -1:
+                losses += 1
+           # print("episode reward list = ", episode_reward_list, "lenght of a list: ", len(episode_reward_list), " sum of a list: ", sum(episode_reward_list))
+            print("================= EVAL EPISODE ", x, " TERMINATED =====================")
+
+        observation = new_observation
+        print("average_award = ", sum(episode_reward_list), "<- sum of list  / number of items in the list ", len(episode_reward_list), "=", sum(episode_reward_list)/len(episode_reward_list))
+        print("epsilon = ", epsilon)
+        print("======================================================================")
+
+print("================= EVAL ENDED =======================")
+print("wins: ", wins)
+print("losses: ", losses)
+print("winrate: ", wins/NUMBER_OF_EPISODES)
 
 
        
